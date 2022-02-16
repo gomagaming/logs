@@ -1,0 +1,28 @@
+{
+    "name": "gomagaming/logs",
+    "description": "Register logs into GomaGaming Backend Service",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "GOMAWEBDEV, Lda.",
+            "email": "mail@gomadevelopment.pt"
+        }
+    ],
+    "require": {
+        "illuminate/redis": "^8.82",
+        "predis/predis": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "GomaGaming\\Logs\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "GomaGaming\\Logs\\GomaGamingLogsServiceProvider"
+            ]
+        }
+    }
+}
