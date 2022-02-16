@@ -9,9 +9,11 @@ class GomaGamingLogsServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../config/gomagaminglogs.php' => config_path('gomagaminglogs.php')
-        ]);
+        if (app() instanceof \Illuminate\Foundation\Application) {
+            $this->publishes([
+                __DIR__ . '/../config/gomagaminglogs.php' => config_path('gomagaminglogs.php')
+            ]);
+        }
     }
 
     public function register()
