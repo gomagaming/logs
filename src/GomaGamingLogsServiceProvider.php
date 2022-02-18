@@ -8,12 +8,12 @@ class GomaGamingLogsServiceProvider extends ServiceProvider
 {
 
     public function boot()
-    {
+    {     
         if (app() instanceof \Illuminate\Foundation\Application) {
             $this->publishes([
                 __DIR__ . '/../config/gomagaminglogs.php' => config_path('gomagaminglogs.php')
             ]);
-        }
+        }       
     }
 
     public function register()

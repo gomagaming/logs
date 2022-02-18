@@ -17,6 +17,20 @@ class GomaGamingLogs
         return self::dispatch($message, 'info');
     }    
 
+    public static function beforeRequest($message = null)
+    {
+        $message = $message ? $message : 'Middleware before request';
+
+        return self::info($message);
+    }
+
+    public static function beforeResponse($message = null)
+    {
+        $message = $message ? $message : 'Middleware before response';
+
+        return self::info($message);
+    }    
+
     private static function dispatch($message, $type)
     {
         $logData = [
