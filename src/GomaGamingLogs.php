@@ -17,29 +17,18 @@ class GomaGamingLogs
         return self::dispatch($message, 'info');
     }    
 
-    public static function beforeRequest($message = null)
-    {
-        $message = $message ? $message : 'Middleware before request';
-
-        return self::info($message);
-    }
-
-    public static function beforeResponse($message = null)
-    {
-        $message = $message ? $message : 'Middleware before response';
-
-        return self::info($message);
-    }    
-
     private static function dispatch($message, $type)
     {
         $logData = [
-            'service' => config('app.name'), 
+            'service' => config('gomagaminglogs.service_name'),
+            'env'     => config('gomagaminglogs.env'),
             'type'    => $type,
             'message' => $message,
+            'user_id' => auth()->user() ? auth()->guard(config('gomagaminglogs.guard'))->user()->id : null,
             'path'    => request()->getPathInfo(),
             'headers' => json_encode(request()->headers->all()),
-            'params'  => json_encode(request()->all())
+            'params'  => json_encode(request()->all()),
+            'created_at' => date('Y-m-d H:i:s')
         ];
 
         dispatch((new LogJob($logData))->onQueue(config('gomagaminglogs.queue')));

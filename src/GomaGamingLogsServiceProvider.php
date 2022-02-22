@@ -13,7 +13,17 @@ class GomaGamingLogsServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../config/gomagaminglogs.php' => config_path('gomagaminglogs.php')
             ]);
-        }       
+        }
+
+        if ($this->app->runningInConsole()) {
+            if (! class_exists('CreateLogsTable')) {
+              $this->publishes([
+                __DIR__ . '/../database/migrations/create_logs_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_logs_table.php'),
+              ], 'migrations');
+            }
+        }
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'gomagaming');        
     }
 
     public function register()

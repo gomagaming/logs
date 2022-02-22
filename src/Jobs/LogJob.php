@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+use GomaGaming\Logs\Services\LogService;
+
 class LogJob implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
@@ -29,8 +31,10 @@ class LogJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(LogService $logService)
     {
-        
-    }
+        if (config('gomagaminglogs.process_jobs')) {
+            $logService->process($this->data);
+        }
+    }  
 }

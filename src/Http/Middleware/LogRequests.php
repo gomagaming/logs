@@ -9,7 +9,7 @@ class LogRequests
 {
     public function handle($request, Closure $next)
     {
-        GomaGamingLogs::beforeRequest();
+        GomaGamingLogs::info(config('gomagaminglogs.request_msg'));
 
         return $next($request);
     }

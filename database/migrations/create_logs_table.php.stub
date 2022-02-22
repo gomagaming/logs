@@ -1,0 +1,67 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateLogsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('log_hashes', function (Blueprint $table) {
+            $table->id();
+            $table->string('hash', 32);
+            $table->integer('hits')->default(1);
+            $table->tinyInteger('sent')->default(0);
+            $table->string('status', 10)->default('pending');            
+            
+            $table->timestamps();
+
+            $table->index('hash');
+        });
+                
+        Schema::create('logs', function (Blueprint $table) {
+            $table->id();
+            $table->string('type', 10);
+            $table->string('service', 30);
+            $table->string('env', 20);
+            $table->string('user_id', 50)->nullable();
+            $table->string('path', 50);
+            $table->text('message');
+            $table->bigInteger('log_hash_id')->unsigned()->nullable();
+            $table->foreign('log_hash_id')->references('id')->on('log_hashes');
+            
+            $table->timestamps();
+        });
+
+        Schema::create('log_meta_data', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('log_id')->unsigned();
+            $table->foreign('log_id')->references('id')->on('logs');
+            $table->string('type', 10);
+            $table->string('key', 50);
+            $table->string('value', 100);
+            
+            $table->timestamps();
+
+            $table->index('log_id');
+        });    
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('log_metadata');
+        Schema::dropIfExists('logs');
+        Schema::dropIfExists('log_hashes');
+    }
+}

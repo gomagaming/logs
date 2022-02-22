@@ -11,7 +11,7 @@ class LogResponses
     {
         $response = $next($request);
 
-        GomaGamingLogs::beforeResponse($response->status());
+        GomaGamingLogs::info(config('gomagaminglogs.response_msg') . $response->status());
 
         return $response;
     }
