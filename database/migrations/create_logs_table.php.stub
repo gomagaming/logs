@@ -13,12 +13,17 @@ class CreateLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('log_hashes', function (Blueprint $table) {
+        Schema::create('log_exceptions', function (Blueprint $table) {
             $table->id();
             $table->string('hash', 32);
             $table->integer('hits')->default(1);
             $table->tinyInteger('sent')->default(0);
-            $table->string('status', 10)->default('pending');            
+            $table->string('status', 10)->default('pending');
+            $table->text('message');
+            $table->string('exception', 50);
+            $table->text('file');
+            $table->string('line', 20);
+            $table->text('trace');
             
             $table->timestamps();
 
@@ -33,8 +38,8 @@ class CreateLogsTable extends Migration
             $table->string('user_id', 50)->nullable();
             $table->string('path', 50);
             $table->text('message');
-            $table->bigInteger('log_hash_id')->unsigned()->nullable();
-            $table->foreign('log_hash_id')->references('id')->on('log_hashes');
+            $table->bigInteger('log_exception_id')->unsigned()->nullable();
+            $table->foreign('log_exception_id')->references('id')->on('log_exceptions');
             
             $table->timestamps();
         });
@@ -62,6 +67,6 @@ class CreateLogsTable extends Migration
     {
         Schema::dropIfExists('log_metadata');
         Schema::dropIfExists('logs');
-        Schema::dropIfExists('log_hashes');
+        Schema::dropIfExists('log_exceptions');
     }
 }

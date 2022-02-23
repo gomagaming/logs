@@ -1,11 +1,13 @@
 @component('mail::message')
 # New Alert from {{ $log->service }}
 
-@component('mail::panel')
-    {{ $log->message }}
-@endcomponent
-
 ## Environment: {{ $log->env }}
+
+@component('mail::panel')
+    {{ $log->log_exception->exception }} - {{ $log->log_exception->message }}
+
+    {{ $log->log_exception->file }} - {{ $log->log_exception->line }}
+@endcomponent
 
 @if ($headers->count())
 @component('mail::table')

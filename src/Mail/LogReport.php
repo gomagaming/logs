@@ -3,7 +3,6 @@
 namespace GomaGaming\Logs\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -40,7 +39,7 @@ class LogReport extends Mailable
                         'appName' => config('gomagaminglogs.service_name'),
                         'url' => config('gomagaminglogs.url') . "/".$this->log->id,
                         'headers' => $this->log->getHeaders(),
-                        'params' => $this->log->getParams(),
+                        'params' => $this->log->getParams()
                     ]);
     }
 }

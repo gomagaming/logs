@@ -3,7 +3,7 @@
 namespace GomaGaming\Logs\Services;
 
 use GomaGaming\Logs\Models\Log;
-use GomaGaming\Logs\Models\LogHash;
+use GomaGaming\Logs\Models\LogException;
 use GomaGaming\Logs\Mail\LogReport;
 use Illuminate\Support\Facades\Mail;
 
@@ -13,15 +13,18 @@ class LogService {
     protected $logs;
     protected $hashes;
 
-    public function __construct(Log $logs, LogHash $hashes)
+    public function __construct(Log $logs, LogException $exceptions)
     {
         $this->logs = $logs;
-        $this->hashes = $hashes;
+        $this->exceptions = $exceptions;
     }
 
-    protected function hashMessage($message)
+    protected function hashMessage($data)
     {
-        return md5($message);
+        return md5(
+            $data['service'] . $data['env'] . $data['exception']['exception'] .
+            $data['message'] . $data['exception']['file'] . $data['exception']['line']
+        );
     }
 
     public function process($data)
@@ -30,24 +33,25 @@ class LogService {
                           ->createMetaData($data, 'headers')
                           ->createMetaData($data, 'params');
 
-        if ($log->isType('error')) {
-            $this->processTypeError($log);
+        if ($log->isException()) {
+            $this->processException($log, $data);
         }
     }
 
-    protected function processTypeError($log)
+    protected function processException($log, $data)
     {
-        $hashedMessage = $this->hashMessage($log->message);
+        $data['exception']['hash'] = $this->hashMessage($data);
 
-        if ( $hash = $this->hashes->findByHash($hashedMessage) ) {
-            $hash->incrementHits()->reopen();
+        if ( $exception = $this->exceptions->findByHash($data['exception']['hash']) ) {
+            $exception->incrementHits()->reopen();
         }else{
-            $hash = $this->hashes->create(['hash' => $hashedMessage]);
+            $data['exception']['trace'] = json_encode($data['exception']['trace']);
+            $exception = $this->exceptions->create($data['exception']);
         }
         
-        $log->associateHash($hash);
+        $log->associateException($exception);
 
-        if (app('env') != 'local' && config('gomagaminglogs.send_report_email') && !$hash->hasBeenSent()) {
+        if (app('env') != 'local' && config('gomagaminglogs.send_report_email') && !$exception->hasBeenSent()) {
             $this->report($log);
         }        
     }
@@ -62,6 +66,6 @@ class LogService {
             Mail::to($email)->send(new LogReport($log));
         }
         
-        $log->logHash->setSent();
+        $log->log_exception->setSent();
     }      
 }

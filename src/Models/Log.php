@@ -9,11 +9,11 @@ class Log extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type', 'service', 'env', 'user_id', 'path', 'message', 'hash'];
+    protected $fillable = ['type', 'service', 'env', 'user_id', 'path', 'message', 'exception_id'];
 
-    public function logHash()
+    public function log_exception()
     {
-        return $this->belongsTo(LogHash::class);
+        return $this->belongsTo(LogException::class);
     }
 
     public function metadata()
@@ -29,7 +29,12 @@ class Log extends Model
     public function isType($type)
     {
         return $this->type == $type;
-    }         
+    }  
+    
+    public function isException()
+    {
+        return $this->type == 'exception';
+    }
 
     public function createMetaData($data, $type)
     {            
@@ -46,9 +51,9 @@ class Log extends Model
         return $this;
     }    
 
-    public function associateHash($hash)
+    public function associateException($exception)
     {
-        $this->logHash()->associate($hash);
+        $this->log_exception()->associate($exception);
         $this->save();
 
         return $this;

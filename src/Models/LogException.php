@@ -5,11 +5,11 @@ namespace GomaGaming\Logs\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LogHash extends Model
+class LogException extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = ['hash', 'hits', 'sent', 'status', 'message', 'exception', 'file', 'line', 'trace'];
 
     public function logs()
     {
