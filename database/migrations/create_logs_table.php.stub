@@ -20,9 +20,9 @@ class CreateLogsTable extends Migration
             $table->tinyInteger('sent')->default(0);
             $table->string('status', 10)->default('pending');
             $table->text('message');
-            $table->string('exception', 50);
+            $table->string('exception');
             $table->text('file');
-            $table->string('line', 20);
+            $table->string('line');
             $table->text('trace');
             
             $table->timestamps();
@@ -33,10 +33,10 @@ class CreateLogsTable extends Migration
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
             $table->string('type', 10);
-            $table->string('service', 30);
-            $table->string('env', 20);
+            $table->string('service');
+            $table->string('env', 50);
             $table->string('user_id', 50)->nullable();
-            $table->string('path', 50);
+            $table->string('path');
             $table->text('message');
             $table->bigInteger('log_exception_id')->unsigned()->nullable();
             $table->foreign('log_exception_id')->references('id')->on('log_exceptions');
@@ -50,7 +50,7 @@ class CreateLogsTable extends Migration
             $table->foreign('log_id')->references('id')->on('logs');
             $table->string('type', 10);
             $table->string('key', 50);
-            $table->string('value', 100);
+            $table->string('value');
             
             $table->timestamps();
 
