@@ -47,7 +47,7 @@ class LogService {
         
         $log->associateHash($hash);
 
-        if (/*app('env') != 'local' &&*/ config('gomagaminglogs.send_report_email') && !$hash->hasBeenSent()) {
+        if (app('env') != 'local' && config('gomagaminglogs.send_report_email') && !$hash->hasBeenSent()) {
             $this->report($log);
         }        
     }
