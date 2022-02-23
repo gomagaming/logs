@@ -65,7 +65,7 @@ class CreateLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('log_metadata');
+        Schema::dropIfExists('log_meta_data');
         Schema::dropIfExists('logs');
         Schema::dropIfExists('log_exceptions');
     }

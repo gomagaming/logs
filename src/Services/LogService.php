@@ -22,8 +22,8 @@ class LogService {
     protected function hashMessage($data)
     {
         return md5(
-            $data['service'] . $data['env'] . $data['exception']['exception'] .
-            $data['message'] . $data['exception']['file'] . $data['exception']['line']
+            $data['service'] . $data['env'] . $data['exception']['exception'] . 
+            $data['exception']['file'] . $data['exception']['line']
         );
     }
 
@@ -63,7 +63,7 @@ class LogService {
         }
 
         foreach ($emails as $email) {
-            Mail::to($email)->send(new LogReport($log));
+            Mail::to(trim($email))->send(new LogReport($log));
         }
         
         $log->log_exception->setSent();
