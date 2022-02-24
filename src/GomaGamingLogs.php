@@ -10,7 +10,9 @@ class GomaGamingLogs
 {
     protected static $trace = null;
 
-    protected static function generateTrace()
+    protected static $traceCounter = 0;
+
+    public static function generateTrace()
     {
         self::$trace = bin2hex(random_bytes(20));
 
@@ -22,14 +24,29 @@ class GomaGamingLogs
         return self::$trace == null;
     }
 
+    public static function setTrace($trace)
+    {
+        return self::$trace = $trace;
+    }  
+
     public static function getTrace()
     {
         return self::$trace;
-    }    
+    }  
+    
+    protected static function incrementTraceCounter()
+    {
+        return self::$traceCounter++;
+    }
 
     public static function info($message, $data = [])
     {    
         return self::dispatch($message, 'info', $data);
+    }
+
+    public static function request($message)
+    {
+        return self::info($message, ['trace' => self::generateTrace()]);
     }
 
     public static function error($message, $data = [])
@@ -47,16 +64,16 @@ class GomaGamingLogs
     protected static function dispatch($message, $type, $data = [])
     {
         $logData = [
-            'service'    => config('gomagaminglogs.service_name'),
-            'env'        => config('gomagaminglogs.env'),
-            'type'       => $type,
-            'message'    => $message,
-            'user_id'    => config('gomagaminglogs.auth') ? self::getUserId() : null,
-            'path'       => request()->getPathInfo(),
-            'headers'    => json_encode(request()->headers->all()),
-            'params'     => json_encode(request()->all()),
-            'trace'      => self::isTraceNull() ? self::generateTrace() : self::getTrace(),
-            'created_at' => date('Y-m-d H:i:s')
+            'service'       => config('gomagaminglogs.service_name'),
+            'env'           => config('gomagaminglogs.env'),
+            'type'          => $type,
+            'message'       => $message,
+            'user_id'       => config('gomagaminglogs.auth') ? self::getUserId() : null,
+            'path'          => request()->getPathInfo(),
+            'headers'       => json_encode(request()->headers->all()),
+            'params'        => json_encode(request()->all()),
+            'trace'         => self::isTraceNull() ? self::generateTrace() : self::getTrace(),
+            'trace_counter' => self::incrementTraceCounter()
         ];
 
         if ($data) {

@@ -36,6 +36,7 @@ class CreateLogsTable extends Migration
             $table->string('service');
             $table->string('env', 50);
             $table->string('trace', 40)->nullable();
+            $table->integer('trace_counter');
             $table->string('user_id', 50)->nullable();
             $table->string('path');
             $table->text('message');
