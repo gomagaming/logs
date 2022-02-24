@@ -51,7 +51,7 @@ class GomaGamingLogs
             'env'        => config('gomagaminglogs.env'),
             'type'       => $type,
             'message'    => $message,
-            'user_id'    => auth()->user() ? auth()->user()->id : null,
+            'user_id'    => config('gomagaminglogs.auth') ? self::getUserId() : null,
             'path'       => request()->getPathInfo(),
             'headers'    => json_encode(request()->headers->all()),
             'params'     => json_encode(request()->all()),
@@ -64,6 +64,11 @@ class GomaGamingLogs
         }
 
         dispatch((new LogJob($logData))->onQueue(config('gomagaminglogs.queue')));
+    }
+
+    protected static function getUserId()
+    {
+        return auth()->user() ? auth()->user()->id : null;
     }
 
     protected static function convertExceptionToArray(Throwable $e)

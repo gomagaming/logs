@@ -12,6 +12,8 @@ return [
 
     'url' => env('GOMAGAMINGLOGS_URL', config('app.url')),
 
+    'auth' => env('GOMAGAMINGLOGS_AUTH', false),
+
     'send_report_email' => env('GOMAGAMINGLOGS_SEND_REPORT_EMAIL', true),
 
     'emails' => explode(',', env('GOMAGAMINGLOGS_EMAILS')),
