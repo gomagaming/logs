@@ -51,7 +51,7 @@ class GomaGamingLogs
             'env'        => config('gomagaminglogs.env'),
             'type'       => $type,
             'message'    => $message,
-            'user_id'    => auth()->user() ? auth()->guard(config('gomagaminglogs.guard'))->user()->id : null,
+            'user_id'    => auth()->user() ? auth()->user()->id : null,
             'path'       => request()->getPathInfo(),
             'headers'    => json_encode(request()->headers->all()),
             'params'     => json_encode(request()->all()),
