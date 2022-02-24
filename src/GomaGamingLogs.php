@@ -8,21 +8,21 @@ use GomaGaming\Logs\Jobs\LogJob;
 
 class GomaGamingLogs 
 {
-    public static function error($message)
+    public static function error($message, $data = [])
     {    
-        return self::dispatch($message, 'error');
+        return self::dispatch($message, 'error', $data);
     }
 
-    public static function info($message)
+    public static function info($message, $data = [])
     {    
-        return self::dispatch($message, 'info');
+        return self::dispatch($message, 'info', $data);
     }    
 
-    public static function exception(Throwable $exception)
+    public static function exception(Throwable $exception, $data = [])
     {
-        $exceptionData = self::convertExceptionToArray($exception);
+        $data = array_merge($data, self::convertExceptionToArray($exception));
 
-        return self::dispatch($exceptionData['exception']['message'], 'exception', $exceptionData);
+        return self::dispatch($data['exception']['message'], 'exception', $data);
     }        
 
     protected static function dispatch($message, $type, $data = [])
