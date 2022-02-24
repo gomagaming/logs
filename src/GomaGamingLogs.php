@@ -8,15 +8,34 @@ use GomaGaming\Logs\Jobs\LogJob;
 
 class GomaGamingLogs 
 {
-    public static function error($message, $data = [])
-    {    
-        return self::dispatch($message, 'error', $data);
+    protected static $trace = null;
+
+    protected static function generateTrace()
+    {
+        self::$trace = bin2hex(random_bytes(20));
+
+        return self::$trace;
+    }
+
+    protected static function getTrace()
+    {
+        return self::$trace;
+    }
+
+    protected static function isTraceNull()
+    {
+        return self::$trace == null;
     }
 
     public static function info($message, $data = [])
     {    
         return self::dispatch($message, 'info', $data);
-    }    
+    }
+
+    public static function error($message, $data = [])
+    {    
+        return self::dispatch($message, 'error', $data);
+    }
 
     public static function exception(Throwable $exception, $data = [])
     {
@@ -28,14 +47,15 @@ class GomaGamingLogs
     protected static function dispatch($message, $type, $data = [])
     {
         $logData = [
-            'service' => config('gomagaminglogs.service_name'),
-            'env'     => config('gomagaminglogs.env'),
-            'type'    => $type,
-            'message' => $message,
-            'user_id' => auth()->user() ? auth()->guard(config('gomagaminglogs.guard'))->user()->id : null,
-            'path'    => request()->getPathInfo(),
-            'headers' => json_encode(request()->headers->all()),
-            'params'  => json_encode(request()->all()),
+            'service'    => config('gomagaminglogs.service_name'),
+            'env'        => config('gomagaminglogs.env'),
+            'type'       => $type,
+            'message'    => $message,
+            'user_id'    => auth()->user() ? auth()->guard(config('gomagaminglogs.guard'))->user()->id : null,
+            'path'       => request()->getPathInfo(),
+            'headers'    => json_encode(request()->headers->all()),
+            'params'     => json_encode(request()->all()),
+            'trace'      => self::isTraceNull() ? self::generateTrace() : self::getTrace(),
             'created_at' => date('Y-m-d H:i:s')
         ];
 
