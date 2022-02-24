@@ -17,15 +17,15 @@ class GomaGamingLogs
         return self::$trace;
     }
 
-    protected static function getTrace()
-    {
-        return self::$trace;
-    }
-
     protected static function isTraceNull()
     {
         return self::$trace == null;
     }
+
+    public static function getTrace()
+    {
+        return self::$trace;
+    }    
 
     public static function info($message, $data = [])
     {    
