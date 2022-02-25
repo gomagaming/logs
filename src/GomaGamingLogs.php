@@ -26,18 +26,43 @@ class GomaGamingLogs
 
     public static function setTrace($trace)
     {
-        return self::$trace = $trace;
+        self::$trace = $trace;
     }  
+
+    public static function setTraceCounter($traceCounter)
+    {
+        self::$traceCounter = $traceCounter;
+    }      
 
     public static function getTrace()
     {
         return self::$trace;
-    }  
+    }
+
+    public static function getTraceCounter()
+    {
+        return self::$traceCounter;
+    }    
     
     protected static function incrementTraceCounter()
     {
         return self::$traceCounter++;
     }
+
+    public static function getTraceAndCounter()
+    {
+        return [
+            'trace' => self::getTrace(),
+            'traceCounter' => self::getTraceCounter()
+        ];
+    }
+
+    public static function setTraceAndCounter($tracer, $traceCounter)
+    {
+        self::setTrace($tracer);
+
+        self::setTraceCounter($traceCounter);
+    }    
 
     public static function info($message, $data = [])
     {    
