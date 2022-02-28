@@ -48,7 +48,7 @@ class GomaGamingLogs
         return self::$traceCounter;
     }   
     
-    protected function resetTraceCounter()
+    protected static function resetTraceCounter()
     {
         self::$traceCounter = 0;
     }
