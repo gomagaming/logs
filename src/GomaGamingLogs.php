@@ -16,6 +16,8 @@ class GomaGamingLogs
     {
         self::$trace = bin2hex(random_bytes(20));
 
+        self::resetTraceCounter();
+
         return self::$trace;
     }
 
@@ -27,6 +29,8 @@ class GomaGamingLogs
     public static function setTrace($trace)
     {
         self::$trace = $trace;
+
+        self::resetTraceCounter();
     }  
 
     public static function setTraceCounter($traceCounter)
@@ -42,7 +46,12 @@ class GomaGamingLogs
     public static function getTraceCounter()
     {
         return self::$traceCounter;
-    }    
+    }   
+    
+    protected function resetTraceCounter()
+    {
+        self::$traceCounter = 0;
+    }
     
     protected static function incrementTraceCounter()
     {
