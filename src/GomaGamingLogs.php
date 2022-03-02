@@ -3,6 +3,7 @@
 namespace GomaGaming\Logs;
 
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 use Throwable;
 use GomaGaming\Logs\Jobs\LogJob;
 
@@ -78,9 +79,11 @@ class GomaGamingLogs
         return self::dispatch($message, 'info', $data);
     }
 
-    public static function request($message)
+    public static function request(Request $request, $message)
     {
-        return self::info($message, ['trace' => self::generateTrace()]);
+        $trace = self::getTraceFromHeaders($request);
+
+        return self::info($message, ['trace' => $trace ? $trace : self::generateTrace()]);
     }
 
     public static function error($message, $data = [])
@@ -115,6 +118,11 @@ class GomaGamingLogs
         }
 
         dispatch((new LogJob($logData))->onQueue(config('gomagaminglogs.queue')));
+    }
+
+    protected static function getTraceFromHeaders(Request $request)
+    {
+        return $request->hasHeader('GomaGaming-Logs-Trace') ? $request->header('GomaGaming-Logs-Trace') : null; 
     }
 
     protected static function getUserId()
