@@ -81,9 +81,9 @@ class GomaGamingLogs
 
     public static function request(Request $request, $message)
     {
-        $trace = self::getTraceFromHeaders($request);
+        self::setTrace(self::getTraceFromHeaders($request));
 
-        return self::info($message, ['trace' => $trace ? $trace : self::generateTrace()]);
+        return self::info($message);
     }
 
     public static function error($message, $data = [])
