@@ -44,7 +44,7 @@ class Log extends Model
             $this->metadata()->create([
                 'type'  => $type,
                 'key'   => $key,
-                'value' => substr(is_array($value) ? reset($value) : $value, 0, 99)
+                'value' => is_array($value) ? json_encode($value) : $value
             ]);
         }
 
