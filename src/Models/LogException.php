@@ -64,4 +64,36 @@ class LogException extends Model
     {
         return self::hash($hash)->first();
     }
+
+    public static function getPaginatedLogsByException($logExceptionId)
+    {
+        $logException = self::find($logExceptionId);
+
+        if (!$logException){
+            return;
+        }
+
+        return $logException->logs()->with('metadata')->paginate(10);
+    }
+
+    public static function getFilteredLogExceptions($filters = [])
+    {
+        $query = self::orderBy('updated_at', $filters['orders']['updated_at'] ?? 'DESC');
+
+        $query = self::applyFilters($query, $filters['orders'] ?? [], 'orderBy');
+
+        $query = self::applyFilters($query, $filters['filters'] ?? [], 'where');
+
+        return $query->paginate(10);
+    }
+
+    private static function applyFilters($query, $filters = [], $queryClause)
+    {
+        foreach($filters as $filterKey => $filterValue)
+        {
+            $query = $query->$queryClause($filterKey, $filterValue);
+        }
+
+        return $query;
+    }
 }
