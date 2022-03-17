@@ -78,16 +78,16 @@ class LogException extends Model
 
     public static function getFilteredLogExceptions($filters = [])
     {
-        $query = self::orderBy('updated_at', $filters['orders']['updated_at'] ?? 'DESC');
+        $query = self::query();
 
         $query = self::applyFilters($query, $filters['orders'] ?? [], 'orderBy');
-
+    
         $query = self::applyFilters($query, $filters['filters'] ?? [], 'where');
 
         return $query->paginate(10);
     }
 
-    private static function applyFilters($query, $filters = [], $queryClause)
+    private static function applyFilters($query = null, $filters = [], $queryClause)
     {
         foreach($filters as $filterKey => $filterValue)
         {
