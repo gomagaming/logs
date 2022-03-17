@@ -52,7 +52,7 @@ class CreateLogsTable extends Migration
             $table->foreign('log_id')->references('id')->on('logs');
             $table->string('type', 10);
             $table->string('key', 50);
-            $table->string('value');
+            $table->text('value');
             
             $table->timestamps();
 

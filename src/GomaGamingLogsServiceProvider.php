@@ -4,6 +4,7 @@ namespace GomaGaming\Logs;
 
 use Illuminate\Support\ServiceProvider;
 use GomaGaming\Logs\Console\DeleteLogs;
+use Illuminate\Support\Facades\Route;
 
 class GomaGamingLogsServiceProvider extends ServiceProvider
 {
@@ -31,6 +32,8 @@ class GomaGamingLogsServiceProvider extends ServiceProvider
         }
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'gomagaming');        
+
+        $this->registerRoutes();
     }
 
     public function register()
@@ -40,6 +43,13 @@ class GomaGamingLogsServiceProvider extends ServiceProvider
         $this->app->singleton(GomaGamingLogs::class, function() {
             return new GomaGamingLogs();
         });      
-    }    
+    }
+
+    protected function registerRoutes()
+    {
+        Route::group(['prefix' => 'api'], function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
+    }
 
 }
