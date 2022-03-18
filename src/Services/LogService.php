@@ -45,8 +45,7 @@ class LogService {
         if ( $exception = $this->exceptions->findByHash($data['exception']['hash']) ) {
             $exception->incrementHits()->reopen();
         }else{
-            $data['exception']['trace'] = json_encode($data['exception']['trace']);
-            $exception = $this->exceptions->create($data['exception']);
+            $exception = $this->exceptions->create($this->prepareExceptionData($data));
         }
         
         $log->associateException($exception);
@@ -68,4 +67,13 @@ class LogService {
         
         $log->log_exception->setSent();
     }      
+
+    protected function prepareExceptionData($data)
+    {
+        $data['exception']['trace'] = json_encode($data['exception']['trace']);
+        $data['exception']['service'] = $data['service'];
+        $data['exception']['env'] = $data['env'];
+
+        return $data['exception'];
+    }
 }

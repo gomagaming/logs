@@ -9,7 +9,7 @@ class LogException extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['hash', 'hits', 'sent', 'status', 'message', 'exception', 'file', 'line', 'trace'];
+    protected $fillable = ['hash', 'hits', 'sent', 'status', 'message', 'exception', 'file', 'line', 'trace', 'env', 'service'];
 
     public function logs()
     {
