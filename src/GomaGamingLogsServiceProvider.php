@@ -47,8 +47,12 @@ class GomaGamingLogsServiceProvider extends ServiceProvider
 
     protected function registerRoutes()
     {
-        Route::group(['prefix' => 'api'], function () {
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        Route::group(['prefix' => 'gglogs'], function () {
+            Route::group(['prefix' => 'api'], function () {
+
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
+            });
         });
     }
 
