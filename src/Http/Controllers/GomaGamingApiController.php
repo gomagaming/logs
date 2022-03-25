@@ -45,7 +45,7 @@ class GomaGamingApiController extends BaseController
         return response()->json([
             'status' => 'success',
             'message' => 'Success',
-            'data' => LogException::getPaginatedLogsByException($logExceptionId)
+            'data' => LogException::getPaginatedLogsByException($logExceptionId, $this->request->all())
         ], 200);
     }
 }
