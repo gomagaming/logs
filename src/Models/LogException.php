@@ -65,7 +65,7 @@ class LogException extends Model
         return self::hash($hash)->first();
     }
 
-    public static function getPaginatedLogsByException($logExceptionId)
+    public static function getPaginatedLogsByException($logExceptionId, $filters = [])
     {
         $logException = self::find($logExceptionId);
 
@@ -73,7 +73,11 @@ class LogException extends Model
             return;
         }
 
-        return $logException->logs()->with('metadata')->paginate(10);
+        $query = $logException->logs()->with('metadata');
+
+        $query = $query->skip(($filters['page'] ?? 1) * 10);
+
+        return $query->paginate(10);
     }
 
     public static function getFilteredLogExceptions($filters = [])
@@ -83,6 +87,8 @@ class LogException extends Model
         $query = self::applyFilters($query, $filters['orders'] ?? [], 'orderBy');
     
         $query = self::applyFilters($query, $filters['filters'] ?? [], 'where');
+
+        $query = $query->skip(($filters['page'] ?? 1) * 10);
 
         return $query->paginate(10);
     }
