@@ -37,4 +37,14 @@ class LogJob implements ShouldQueue
             $logService->process($this->data);
         }
     }  
+
+    /**
+     * Get Data
+     *
+     * @return void
+     */
+    public function getData()
+    {
+        return $this->data;
+    } 
 }
