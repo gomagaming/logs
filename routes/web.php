@@ -10,4 +10,7 @@ Route::group(['prefix' => 'exceptions'], function () {
     Route::get('/{logExceptionId}', [GomaGamingApiController::class, 'getLogException']);
     Route::get('/{logExceptionId}/logs', [GomaGamingApiController::class, 'getLogsByException']);
 
+    Route::post('/{logExceptionId}/assign', [GomaGamingApiController::class, 'postLogExceptionAssignee']);
+    Route::post('/{logExceptionId}/archive', [GomaGamingApiController::class, 'postLogExceptionArchive']);
+
 });
