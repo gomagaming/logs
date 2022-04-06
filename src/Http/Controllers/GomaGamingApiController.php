@@ -48,4 +48,25 @@ class GomaGamingApiController extends BaseController
             'data' => LogException::getPaginatedLogsByException($logExceptionId, $this->request->all())
         ], 200);
     }
+
+    public function postLogExceptionAssignee($logExceptionId): JsonResponse
+    {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Success',
+            'data' => LogException::assignLogException($logExceptionId, $this->request->user_id)
+        ], 200);
+    }
+
+    public function postLogExceptionArchive($logExceptionId): JsonResponse
+    {
+        LogException::archiveLogException($logExceptionId);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Success',
+            'data' => []
+        ], 200);   
+    }
+
 }

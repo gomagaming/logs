@@ -9,7 +9,7 @@ class LogException extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['hash', 'hits', 'sent', 'status', 'message', 'exception', 'file', 'line', 'trace', 'env', 'service'];
+    protected $fillable = ['hash', 'hits', 'sent', 'status', 'message', 'exception', 'file', 'line', 'trace', 'env', 'service', 'assigned_to'];
 
     public function logs()
     {
@@ -101,5 +101,31 @@ class LogException extends Model
         }
 
         return $query;
+    }
+
+    public static function assignLogException($logExceptionId, $assignToUserID)
+    {
+        $logException = self::find($logExceptionId);
+
+        if (!$logException){
+            return;
+        }
+
+        $logException->assigned_to = $assignToUserID;
+        $logException->save();
+
+        return $logException;
+    }
+
+    public static function archiveLogException($logExceptionId): void
+    {
+        $logException = self::find($logExceptionId);
+
+        if (!$logException){
+            return;
+        }
+
+        $logException->status = 'archived';
+        $logException->save();
     }
 }
