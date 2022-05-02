@@ -60,6 +60,14 @@ class LogException extends Model
         return $this;
     }
 
+    public function updateTrace($trace)
+    {
+        $this->trace = $trace;
+        $this->save();
+    
+        return $this;
+    }
+
     public function findByHash($hash)
     {
         return self::hash($hash)->first();

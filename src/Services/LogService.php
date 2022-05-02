@@ -40,12 +40,12 @@ class LogService {
 
     protected function processException($log, $data)
     {
-        $data['exception']['hash'] = $this->hashMessage($data);
+        $data = $this->prepareExceptionData($data);
 
-        if ( $exception = $this->exceptions->findByHash($data['exception']['hash']) ) {
-            $exception->incrementHits()->reopen();
+        if ( $exception = $this->exceptions->findByHash($data['hash']) ) {
+            $exception->updateTrace($data['trace'])->incrementHits()->reopen();
         }else{
-            $exception = $this->exceptions->create($this->prepareExceptionData($data));
+            $exception = $this->exceptions->create($data);
         }
         
         $log->associateException($exception);
@@ -70,6 +70,7 @@ class LogService {
 
     protected function prepareExceptionData($data)
     {
+        $data['exception']['hash'] = $this->hashMessage($data);
         $data['exception']['trace'] = json_encode($data['exception']['trace']);
         $data['exception']['service'] = $data['service'];
         $data['exception']['env'] = $data['env'];
