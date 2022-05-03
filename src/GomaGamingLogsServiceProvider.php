@@ -5,6 +5,7 @@ namespace GomaGaming\Logs;
 use Illuminate\Support\ServiceProvider;
 use GomaGaming\Logs\Console\DeleteLogs;
 use Illuminate\Support\Facades\Route;
+use GomaGaming\Logs\Lib\JiraApi;
 
 class GomaGamingLogsServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,13 @@ class GomaGamingLogsServiceProvider extends ServiceProvider
         $this->app->singleton(GomaGamingLogs::class, function() {
             return new GomaGamingLogs();
         });      
+
+        if(config('gomagaminglogs.jira.create_issues'))
+        {
+            $this->app->singleton(JiraApi::class, function ($app) {
+                return new JiraApi(config('gomagaminglogs.jira.project_domain'));
+            });
+        }
     }
 
     protected function registerRoutes()

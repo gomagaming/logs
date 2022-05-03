@@ -9,7 +9,7 @@ class LogException extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['hash', 'hits', 'sent', 'status', 'message', 'exception', 'file', 'line', 'trace', 'env', 'service', 'assigned_to'];
+    protected $fillable = ['hash', 'hits', 'sent', 'status', 'message', 'exception', 'file', 'line', 'trace', 'env', 'service', 'assigned_to', 'jira_issue_key'];
 
     public function logs()
     {
@@ -111,7 +111,7 @@ class LogException extends Model
         return $query;
     }
 
-    public static function assignLogException($logExceptionId, $assignToUserID)
+    public static function assignLogException($jiraApi, $logExceptionId, $data)
     {
         $logException = self::find($logExceptionId);
 
@@ -119,13 +119,27 @@ class LogException extends Model
             return;
         }
 
-        $logException->assigned_to = $assignToUserID;
+        $logException->assigned_to = $data['user_id'];
         $logException->save();
+
+        if (config('gomagaminglogs.jira.create_issues')) 
+        {
+            $createdIssue = 
+                $logException->jira_issue_key 
+                ? $jiraApi->updateIssueAssignee($logException->jira_issue_key, ['accountId' => config('gomagaminglogs.jira.account_ids')[(int)$data['user_id'] - 1]])
+                : $jiraApi->createIssue(self::generateJiraIssueData($data));
+    
+            if (isset($createdIssue['key']))
+            {
+                $logException->jira_issue_key = $createdIssue['key'];
+                $logException->save();
+            }
+        }
 
         return $logException;
     }
 
-    public static function archiveLogException($logExceptionId): void
+    public static function archiveLogException($jiraApi, $logExceptionId): void
     {
         $logException = self::find($logExceptionId);
 
@@ -135,5 +149,85 @@ class LogException extends Model
 
         $logException->status = 'archived';
         $logException->save();
+
+        if (config('gomagaminglogs.jira.create_issues') && $logException->jira_issue_key)
+        {
+            $jiraApi->updateIssueStatus($logException->jira_issue_key, ['transition' => ['id' => '31']]);
+        }
+    }
+
+    public static function generateJiraIssueData($data): array
+    {
+        $createJiraIssueData = self::getCreateJiraIssueDefaultStructure();
+
+        $createJiraIssueData['fields']['summary'] .= $data['issue_message'];
+
+        $createJiraIssueData['fields']['summary'] = 
+            (strlen($createJiraIssueData['fields']['summary']) > 254) 
+            ? substr($createJiraIssueData['fields']['summary'], 0, 251) . '...' 
+            : $createJiraIssueData['fields']['summary'];
+        
+        $createJiraIssueData['fields']['summary'] = preg_replace('~[\r\n]+~', '', $createJiraIssueData['fields']['summary']);
+
+        $createJiraIssueData['fields']['parent']['key'] = config('gomagaminglogs.jira.parent_issue');
+
+        $createJiraIssueData['fields']['description']['content'][0]['content'][1]['text'] = $data['issue_crawler_link'];
+        $createJiraIssueData['fields']['description']['content'][0]['content'][1]['marks'][0]['attrs']['href'] = $data['issue_crawler_link'];
+        
+        $createJiraIssueData['fields']['assignee']['id'] = config('gomagaminglogs.jira.account_ids')[(int)$data['user_id'] - 1];
+
+        return $createJiraIssueData;
+    }
+
+    public static function getCreateJiraIssueDefaultStructure()
+    {
+        return [
+            'fields' => [
+                'summary' => '[Backend] - ',
+                'parent' => [
+                    'key' => '',
+                ],
+                'issuetype' => [
+                    'id' => '10005', // sub-task
+                ],
+                'project' => [
+                    'id' => '10000', // Sportsbook
+                ],
+                'description' => [
+                    'type' => 'doc',
+                    'version' => 1,
+                    'content' => [
+                        0 => [
+                            'type' => 'paragraph',
+                            'content' => [
+                                0 => [
+                                    'type' => 'text',
+                                    'text' => 'See: ',
+                                ],
+                                1 => [
+                                    'type' => 'text',
+                                    'text' => 'https://sportsbook-crawler.gomagaming.com/logs/issues/71',
+                                    'marks' => [
+                                        0 => [
+                                            'type' => 'link',
+                                            'attrs' => [
+                                                'href' => 'https://sportsbook-crawler.gomagaming.com/logs/issues/71'
+                                            ]
+                                        ]
+                                    ]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'labels' => [
+                    0 => 'back-end',
+                ],
+                'duedate' => null,
+                'assignee' => [
+                    'id' => '',
+                ],
+            ],
+        ];
     }
 }
