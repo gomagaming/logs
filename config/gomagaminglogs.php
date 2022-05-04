@@ -22,4 +22,14 @@ return [
 
     'response_msg' => env('GOMAGAMINGLOGS_RESPONSE_MSG', 'Response: '),
 
+    'jira' => [
+        'create_issues' => env('GOMAGAMINGLOGS_JIRA_CREATE_ISSUES', false),
+        'user_email' => env('GOMAGAMINGLOGS_JIRA_USER_EMAIL', ''),
+        'user_api_token' => env('GOMAGAMINGLOGS_JIRA_USER_API_TOKEN', ''),
+        'project_domain' => env('GOMAGAMINGLOGS_JIRA_PROJECT_DOMAIN', ''),
+        'account_ids' => explode(', ', env('GOMAGAMINGLOGS_JIRA_ACCOUNT_IDS', '')),
+        'issue_reporter' => env('GOMAGAMINGLOGS_JIRA_ISSUE_REPORTER', ''),
+        'parent_issue' => env('GOMAGAMINGLOGS_JIRA_PARENT_ISSUE', ''),
+    ],
+
 ];

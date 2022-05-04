@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
+use GomaGaming\Logs\Lib\JiraApi;
+
 use GomaGaming\Logs\Models\LogException;
 
 class GomaGamingApiController extends BaseController
@@ -49,18 +51,18 @@ class GomaGamingApiController extends BaseController
         ], 200);
     }
 
-    public function postLogExceptionAssignee($logExceptionId): JsonResponse
+    public function postLogExceptionAssignee(JiraApi $jiraApi, $logExceptionId): JsonResponse
     {
         return response()->json([
             'status' => 'success',
             'message' => 'Success',
-            'data' => LogException::assignLogException($logExceptionId, $this->request->user_id)
+            'data' => LogException::assignLogException($jiraApi, $logExceptionId, $this->request->all())
         ], 200);
     }
 
-    public function postLogExceptionArchive($logExceptionId): JsonResponse
+    public function postLogExceptionArchive(JiraApi $jiraApi, $logExceptionId): JsonResponse
     {
-        LogException::archiveLogException($logExceptionId);
+        LogException::archiveLogException($jiraApi, $logExceptionId);
 
         return response()->json([
             'status' => 'success',
