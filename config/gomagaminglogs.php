@@ -24,12 +24,12 @@ return [
 
     'jira' => [
         'create_issues' => env('GOMAGAMINGLOGS_JIRA_CREATE_ISSUES', false),
-        'user_email' => env('GOMAGAMINGLOGS_JIRA_USER_EMAIL', 'aramalho@gomadevelopment.pt'),
-        'user_api_token' => env('GOMAGAMINGLOGS_JIRA_USER_API_TOKEN', 'hynmuOrxftIMFZZy9RsV798C'),
-        'project_domain' => env('GOMAGAMINGLOGS_JIRA_PROJECT_DOMAIN'),
-        'account_ids' => explode(', ', env('GOMAGAMINGLOGS_JIRA_ACCOUNT_IDS')),
-        'issue_reporter' => env('GOMAGAMINGLOGS_JIRA_ISSUE_REPORTER', '70121:50b22cc7-383a-4526-95a5-f8c752679228'),
-        'parent_issue' => env('GOMAGAMINGLOGS_JIRA_PARENT_ISSUE', 'SPOR-1359'),
+        'user_email' => env('GOMAGAMINGLOGS_JIRA_USER_EMAIL', ''),
+        'user_api_token' => env('GOMAGAMINGLOGS_JIRA_USER_API_TOKEN', ''),
+        'project_domain' => env('GOMAGAMINGLOGS_JIRA_PROJECT_DOMAIN', ''),
+        'account_ids' => explode(', ', env('GOMAGAMINGLOGS_JIRA_ACCOUNT_IDS', '')),
+        'issue_reporter' => env('GOMAGAMINGLOGS_JIRA_ISSUE_REPORTER', ''),
+        'parent_issue' => env('GOMAGAMINGLOGS_JIRA_PARENT_ISSUE', ''),
     ],
 
 ];
