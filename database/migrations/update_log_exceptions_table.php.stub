@@ -16,6 +16,7 @@ class UpdateLogExceptionsTable extends Migration
         Schema::table('log_exceptions', function (Blueprint $table) {
 
             $table->integer('assigned_to')->nullable()->default(null)->after('trace');
+            $table->string('jira_issue_key', 32)->nullable()->default(null)->after('assigned_to');
 
         });
     }
@@ -27,6 +28,7 @@ class UpdateLogExceptionsTable extends Migration
      */
     public function down()
     {
+        Schema::dropColumn('jira_issue_key');
         Schema::dropColumn('assigned_to');
     }
 }
