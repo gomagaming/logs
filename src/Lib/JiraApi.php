@@ -4,9 +4,9 @@ namespace GomaGaming\Logs\Lib;
 
 class JiraApi extends HttpApi
 {
-    private function generateApiToken($params = [])
+    public function getIssue($issueKey, $params = [])
     {
-        return $this->newRequest('GET', 'issue', $params);
+        return $this->newRequest('GET', 'issue/' . $issueKey, $params);
     }
 
     public function createIssue($params = [])
