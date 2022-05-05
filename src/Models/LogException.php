@@ -124,14 +124,17 @@ class LogException extends Model
 
         if (config('gomagaminglogs.jira.create_issues')) 
         {
-            $createdIssue = 
-                $logException->jira_issue_key 
-                ? $jiraApi->updateIssueAssignee($logException->jira_issue_key, ['accountId' => config('gomagaminglogs.jira.account_ids')[(int)$data['user_id'] - 1]])
+            $issue = $logException->jira_issue_key
+                ? 
+                    (isset($jiraApi->getIssue($logException->jira_issue_key)['key']) 
+                        ? $jiraApi->updateIssueAssignee($logException->jira_issue_key, ['accountId' => config('gomagaminglogs.jira.account_ids')[(int)$data['user_id'] - 1]])
+                        : $jiraApi->createIssue(self::generateJiraIssueData($data))
+                    )
                 : $jiraApi->createIssue(self::generateJiraIssueData($data));
     
-            if (isset($createdIssue['key']))
+            if (isset($issue['key']))
             {
-                $logException->jira_issue_key = $createdIssue['key'];
+                $logException->jira_issue_key = $issue['key'];
                 $logException->save();
             }
         }
