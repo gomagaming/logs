@@ -119,6 +119,8 @@ class LogException extends Model
             return;
         }
 
+        $data['user_id'] = $data['user_id'] == 'null' ? null : $data['user_id'];
+
         $logException->assigned_to = $data['user_id'];
         $logException->save();
 
@@ -127,7 +129,7 @@ class LogException extends Model
             $issue = $logException->jira_issue_key
                 ? 
                     (isset($jiraApi->getIssue($logException->jira_issue_key)['key']) 
-                        ? $jiraApi->updateIssueAssignee($logException->jira_issue_key, ['accountId' => config('gomagaminglogs.jira.account_ids')[(int)$data['user_id'] - 1]])
+                        ? $jiraApi->updateIssueAssignee($logException->jira_issue_key, ['accountId' => $data['user_id'] ? config('gomagaminglogs.jira.account_ids')[(int)$data['user_id'] - 1] : null])
                         : $jiraApi->createIssue(self::generateJiraIssueData($data))
                     )
                 : $jiraApi->createIssue(self::generateJiraIssueData($data));
@@ -142,21 +144,25 @@ class LogException extends Model
         return $logException;
     }
 
-    public static function archiveLogException($jiraApi, $logExceptionId): void
+    public static function archiveLogException($jiraApi, $logExceptionsIds): void
     {
-        $logException = self::find($logExceptionId);
-
-        if (!$logException){
-            return;
-        }
-
-        $logException->status = 'archived';
-        $logException->save();
-
-        if (config('gomagaminglogs.jira.create_issues') && $logException->jira_issue_key)
+        foreach ($logExceptionsIds as $logExceptionId) 
         {
-            $jiraApi->updateIssueStatus($logException->jira_issue_key, ['transition' => ['id' => '31']]);
+            $logException = self::find($logExceptionId);
+    
+            if (!$logException){
+                continue;
+            }
+    
+            $logException->status = 'archived';
+            $logException->save();
+            
+            if (config('gomagaminglogs.jira.create_issues') && $logException->jira_issue_key)
+            {
+                $jiraApi->updateIssueStatus($logException->jira_issue_key, ['transition' => ['id' => '31']]);
+            }
         }
+
     }
 
     public static function generateJiraIssueData($data): array
