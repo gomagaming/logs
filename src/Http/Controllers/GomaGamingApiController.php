@@ -6,7 +6,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 use GomaGaming\Logs\Lib\JiraApi;
@@ -17,19 +16,12 @@ class GomaGamingApiController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $request;
-
-    public function __construct(Request $request)
-    {
-        $this->request = $request;
-    }
-
     public function getLogExceptions(): JsonResponse
     {
         return response()->json([
             'status' => 'success',
             'message' => 'Success',
-            'data' => LogException::getFilteredLogExceptions($this->request->all())
+            'data' => LogException::getFilteredLogExceptions(request()->all())
         ], 200);
     }
 
@@ -47,7 +39,7 @@ class GomaGamingApiController extends BaseController
         return response()->json([
             'status' => 'success',
             'message' => 'Success',
-            'data' => LogException::getPaginatedLogsByException($logExceptionId, $this->request->all())
+            'data' => LogException::getPaginatedLogsByException($logExceptionId, request()->all())
         ], 200);
     }
 
@@ -56,7 +48,7 @@ class GomaGamingApiController extends BaseController
         return response()->json([
             'status' => 'success',
             'message' => 'Success',
-            'data' => LogException::assignLogException($jiraApi, $logExceptionId, $this->request->all())
+            'data' => LogException::assignLogException($jiraApi, $logExceptionId, request()->all())
         ], 200);
     }
 
