@@ -101,7 +101,7 @@ class LogException extends Model
         return $query->paginate(10);
     }
 
-    private static function applyFilters($query = null, $filters = [], $queryClause)
+    private static function applyFilters($query = null, $filters = [], $queryClause = 'where')
     {
         foreach($filters as $filterKey => $filterValue)
         {
