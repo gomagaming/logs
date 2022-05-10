@@ -54,7 +54,7 @@ class GomaGamingApiController extends BaseController
 
     public function postLogExceptionArchive(JiraApi $jiraApi): JsonResponse
     {
-        LogException::archiveLogException($jiraApi, $this->request->logExceptionsIds);
+        LogException::archiveLogException($jiraApi, request()->logExceptionsIds);
 
         return response()->json([
             'status' => 'success',
