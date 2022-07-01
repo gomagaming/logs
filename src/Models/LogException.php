@@ -11,6 +11,11 @@ class LogException extends Model
 
     protected $fillable = ['hash', 'hits', 'sent', 'status', 'message', 'exception', 'file', 'line', 'trace', 'env', 'service', 'assigned_to', 'jira_issue_key'];
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
     public function logs()
     {
         return $this->hasMany(Log::class);

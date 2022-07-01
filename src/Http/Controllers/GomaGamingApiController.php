@@ -1,6 +1,7 @@
 <?php
 
 namespace GomaGaming\Logs\Http\Controllers;
+ini_set('memory_limit', '-1');
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
@@ -10,11 +11,39 @@ use Illuminate\Http\JsonResponse;
 
 use GomaGaming\Logs\Lib\JiraApi;
 
+use GomaGaming\Logs\Models\Log;
 use GomaGaming\Logs\Models\LogException;
 
 class GomaGamingApiController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function getLogs(): JsonResponse
+    {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Success',
+            'data' => Log::getFilteredLogs(request()->all())
+        ], 200);
+    }
+
+    public function getLog($logId): JsonResponse
+    {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Success',
+            'data' => Log::getLogInfo(request()->all(), $logId)
+        ], 200);
+    }
+
+    public function getLogServices(): JsonResponse
+    {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Success',
+            'data' => Log::getLogServices()
+        ], 200);
+    }
 
     public function getLogExceptions(): JsonResponse
     {
