@@ -16,7 +16,7 @@ return [
 
     'send_report_email' => env('GOMAGAMINGLOGS_SEND_REPORT_EMAIL', true),
 
-    'emails' => explode(',', env('GOMAGAMINGLOGS_EMAILS')),
+    'emails' => explode(',', env('GOMAGAMINGLOGS_EMAILS') ?? ''),
 
     'request_msg' => env('GOMAGAMINGLOGS_REQUEST_MSG', 'Request'),
 
