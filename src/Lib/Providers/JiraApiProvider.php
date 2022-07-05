@@ -5,7 +5,7 @@ namespace GomaGaming\Logs\Lib;
 use GomaGaming\Logs\Lib\JiraApi;
 use Illuminate\Support\ServiceProvider;
 
-class FavoritesApiProvider extends ServiceProvider
+class JiraApiProvider extends ServiceProvider
 {
     /**
      * Register bindings in the container.
