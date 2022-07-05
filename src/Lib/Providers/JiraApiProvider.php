@@ -1,6 +1,6 @@
 <?php
 
-namespace GomaGaming\Logs\Lib;
+namespace GomaGaming\Logs\Lib\Providers;
 
 use GomaGaming\Logs\Lib\JiraApi;
 use Illuminate\Support\ServiceProvider;
