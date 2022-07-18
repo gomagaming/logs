@@ -11,6 +11,11 @@ class Log extends Model
 
     protected $fillable = ['type', 'service', 'env', 'user_id', 'path', 'message', 'exception_id', 'trace', 'trace_counter'];
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
     public function log_exception()
     {
         return $this->belongsTo(LogException::class);
@@ -21,10 +26,15 @@ class Log extends Model
         return $this->hasMany(LogMetaData::class);
     }
 
-    protected function serializeDate(\DateTimeInterface $date)
+    public function scopeTrace($query, $trace)
     {
-        return $date->format('Y-m-d');
-    }  
+        return $query->where('trace', $trace);
+    }
+
+    // protected function serializeDate(\DateTimeInterface $date)
+    // {
+    //     return $date->format('Y-m-d');
+    // }  
 
     public function isType($type)
     {
@@ -68,4 +78,46 @@ class Log extends Model
     {
         return $this->metadata()->type('params')->get();
     }    
+
+    public static function getLogServices()
+    {
+        return self::select('service')->groupBy('service')->get()->pluck('service')->toArray();
+    }
+
+    public static function getFilteredLogs($filters = [])
+    {
+        $query = self::orderBy('created_at', 'DESC');
+
+        $page = $filters['page'] ?? 1;
+        unset($filters['page']);
+
+        $query = self::applyFilters($query, $filters, 'where');
+
+        $query = $query->skip($page == 1 ? 0 : ($page - 1) * 10);
+
+        return $query->paginate(10);
+    }
+
+    public static function getLogInfo($filters, $logId)
+    {
+        $log = self::with('log_exception', 'metadata')->find($logId);
+
+        $query = self::with('log_exception', 'metadata')->orderBy('created_at', 'DESC')->trace($log->trace);
+
+        $page = $filters['page'] ?? 1;
+
+        $query = $query->skip($page == 1 ? 0 : ($page - 1) * 10);
+
+        return ['log' => $log, 'logs-with-associated-trace' => $query->paginate(10)];
+    }
+
+    private static function applyFilters($query = null, $filters = [], $queryClause = 'where')
+    {
+        foreach($filters as $filterKey => $filterValue)
+        {
+            $query = $query->$queryClause($filterKey, $filterValue);
+        }
+
+        return $query;
+    }
 }   
