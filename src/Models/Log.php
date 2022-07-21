@@ -95,7 +95,7 @@ class Log extends Model
 
         $query = $query->skip($page == 1 ? 0 : ($page - 1) * 10);
 
-        return $query->paginate(10);
+        return $query->simplePaginate(10);
     }
 
     public static function getLogInfo($filters, $logId)
