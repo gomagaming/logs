@@ -32,4 +32,17 @@ return [
         'parent_issue' => env('GOMAGAMINGLOGS_JIRA_PARENT_ISSUE', ''),
     ],
 
+    'processing' => [
+        'connection' => env('GOMAGAMINGLOGS_PROCESSING_CONNECTION', 'kafka'),
+        'kafka' => [
+            'brokers' => env('GOMAGAMINGLOGS_PROCESSING_KAFKA_BROKERS', 'broker:9092'),
+            'group' => env('GOMAGAMINGLOGS_PROCESSING_KAFKA_CONSUMER_GROUP', 'gomagaming-logs-group'),
+            'topic' => env('GOMAGAMINGLOGS_PROCESSING_KAFKA_TOPIC_LOGS', 'goma.v1.sentry.logs'),
+            'production' => config('app.env') == 'production' ? [
+                'api-key' => env('KAKFA_PRODUCTION_API_KEY', ''),
+                'api-secret' => env('KAKFA_PRODUCTION_API_SECRET', ''),
+            ] : []
+        ],
+    ],
+
 ];

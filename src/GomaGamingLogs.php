@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Throwable;
 use GomaGaming\Logs\Jobs\LogJob;
+use GomaGaming\Logs\Services\PublishMessageService;
 
 class GomaGamingLogs 
 {
@@ -76,7 +77,7 @@ class GomaGamingLogs
 
     public static function info($message, $data = [])
     {    
-        return self::dispatch($message, 'info', $data);
+        return self::processLogData($message, 'info', $data);
     }
 
     public static function request(Request $request, $message)
@@ -88,17 +89,17 @@ class GomaGamingLogs
 
     public static function error($message, $data = [])
     {    
-        return self::dispatch($message, 'error', $data);
+        return self::processLogData($message, 'error', $data);
     }
 
     public static function exception(Throwable $exception, $data = [])
     {
         $data = array_merge($data, self::convertExceptionToArray($exception));
 
-        return self::dispatch($data['exception']['message'], 'exception', $data);
+        return self::processLogData($data['exception']['message'], 'exception', $data);
     }        
 
-    protected static function dispatch($message, $type, $data = [])
+    protected static function processLogData($message, $type, $data = [])
     {
         $logData = [
             'service'       => config('gomagaminglogs.service_name'),
@@ -117,7 +118,14 @@ class GomaGamingLogs
             $logData = array_merge($logData, $data);
         }
 
-        dispatch((new LogJob($logData))->onQueue(config('gomagaminglogs.queue')));
+        if (config('gomagaminglogs.processing.connection') == 'kafka' || ! config('gomagaminglogs.processing.connection'))
+        {
+            PublishMessageService::publish(config('gomagaminglogs.processing.kafka.topic'), $logData);
+        }
+        else
+        {
+            dispatch((new LogJob($logData))->onQueue(config('gomagaminglogs.queue')));
+        }
     }
 
     protected static function getTraceFromHeaders(Request $request)

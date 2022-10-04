@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-
+        "mateusjunges/laravel-kafka": "^1.8"
     },
     "autoload": {
         "psr-4": {

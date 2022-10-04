@@ -4,6 +4,7 @@ namespace GomaGaming\Logs;
 
 use Illuminate\Support\ServiceProvider;
 use GomaGaming\Logs\Console\DeleteLogs;
+use GomaGaming\Logs\Console\ConsumeLogsEvents;
 use Illuminate\Support\Facades\Route;
 use GomaGaming\Logs\Lib\JiraApi;
 
@@ -15,7 +16,7 @@ class GomaGamingLogsServiceProvider extends ServiceProvider
         if (app() instanceof \Illuminate\Foundation\Application) {
             $this->publishes([
                 __DIR__ . '/../config/gomagaminglogs.php' => config_path('gomagaminglogs.php')
-            ]);
+            ], 'gomagaming-logs');
         }
 
         if ($this->app->runningInConsole()) {
@@ -32,6 +33,10 @@ class GomaGamingLogsServiceProvider extends ServiceProvider
                 DeleteLogs::class,
             ]);
         }
+
+        $this->commands([
+            ConsumeLogsEvents::class
+        ]);
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'gomagaming');        
 
