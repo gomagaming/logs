@@ -33,7 +33,7 @@ class PublishMessageService
             $options = array_merge($options, $productionOptions);
         }
 
-        $producer = Kafka::publishOn($topic)
+        $producer = Kafka::publishOn($topic, config('gomagaminglogs.processing.kafka.brokers'))
             ->withConfigOptions($options)
             ->withBodyKey('message', $message)
             ->withHeaders($headers)
